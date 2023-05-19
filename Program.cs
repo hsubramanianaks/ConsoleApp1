@@ -27,7 +27,7 @@ static async Task ForwardUsingCommand(V1Pod v1pod)
         s.RedirectStandardOutput = true;
         s.RedirectStandardError = true;
         s.Arguments = "port-forward pod/" + v1pod.Metadata.Name + " --pod-running-timeout=1s 28015:80 --namespace todo-app";
-        s.FileName = "/home/hsubramanian/kubectl/linux/kubectl";
+        s.FileName = "/home/hsubramanian/repos/ConsoleApp1/bin/Debug/net6.0/linux-x64/publish/kubectl/kubectl";
 
         Process process = new Process();
         process.StartInfo = s;
