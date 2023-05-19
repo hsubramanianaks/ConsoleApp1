@@ -2,6 +2,7 @@
 using k8s;
 using k8s.Models;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -14,7 +15,28 @@ Console.WriteLine("Starting port forward!");
 
 var list = client.CoreV1.ListNamespacedPod("todo-app");
 var pod = list.Items[0];
-await Forward(client, pod);
+// await Forward(client, pod);
+await ForwardUsingCommand(pod);
+
+static async Task ForwardUsingCommand(V1Pod v1pod)
+{
+    var portForwardProcess = Task.Run(() =>
+    {
+        ProcessStartInfo s = new ProcessStartInfo();
+        s.UseShellExecute = false;
+        s.RedirectStandardOutput = true;
+        s.RedirectStandardError = true;
+        s.Arguments = "port-forward pod/" + v1pod.Metadata.Name + " --pod-running-timeout=1s 28015:80 --namespace todo-app";
+        s.FileName = "/home/hsubramanian/kubectl/linux/kubectl";
+
+        Process process = new Process();
+        process.StartInfo = s;
+        process.Start();
+        Console.WriteLine("port forward via command started");
+        process.WaitForExit(100);
+    });
+    await portForwardProcess;
+}
 
 
 static async Task Forward(IKubernetes client, V1Pod pod)
