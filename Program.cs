@@ -9,14 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 Console.WriteLine("Hello, World!");
 
-var config = KubernetesClientConfiguration.BuildConfigFromConfigFile();
+var config = KubernetesClientConfiguration.BuildConfigFromConfigFile("/etc/localAgent/kubeconfig");
 IKubernetes client = new Kubernetes(config);
 Console.WriteLine("Starting port forward!");
 
 var list = client.CoreV1.ListNamespacedPod("todo-app");
 var pod = list.Items[0];
-// await Forward(client, pod);
-await ForwardUsingCommand(pod);
+await Forward(client, pod);
+// await ForwardUsingCommand(pod);
 
 static async Task ForwardUsingCommand(V1Pod v1pod)
 {
@@ -42,7 +42,7 @@ static async Task ForwardUsingCommand(V1Pod v1pod)
 static async Task Forward(IKubernetes client, V1Pod pod)
 {
     // Note this is single-threaded, it won't handle concurrent requests well...
-    var webSocket = await client.WebSocketNamespacedPodPortForwardAsync(pod.Metadata.Name, "todo-app", new int[] { 80, 8080 }, "v4.channel.k8s.io");
+    var webSocket = await client.WebSocketNamespacedPodPortForwardAsync("frontend-847f78f9b-s7fj7", "todo-app", new int[] { 80, 8080 }, "v4.channel.k8s.io");
     var demux = new StreamDemuxer(webSocket, StreamType.PortForward);
     demux.Start();
 

@@ -55,6 +55,10 @@
             "KubernetesClient.Models": {
               "target": "Package",
               "version": "[8.0.68, )"
+            },
+            "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
+              "target": "Package",
+              "version": "[1.17.2, )"
             }
           },
           "imports": [
